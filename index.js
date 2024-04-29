@@ -10,6 +10,7 @@ const session = require('express-session');
 const router = express.Router();
 
 const announcementRouter = require('./announcementRouter');
+const userRouter = require('./userRouter');
 
 const app = express();
 const port = 3000;
@@ -74,32 +75,7 @@ async function fetchRoomsAndUserInfo(orgCode) {
     return rooms;
 }
 
-app.post('/user/organization/getdetails', (req, res) => {
-    const { org_code } = req.body;
 
-    // Check if org_code is provided in the request body
-    if (!org_code) {
-        return res.status(400).json({ error: 'org_code is required' });
-    }
-
-    // Query to fetch organization details based on org_code
-    const query = 'SELECT name, description FROM _organization WHERE org_code = ?';
-
-    connection.query(query, [org_code], (err, results) => {
-        if (err) {
-            console.error('Error fetching organization details:', err);
-            return res.status(500).json({ error: 'Error fetching organization details' });
-        }
-
-        // Check if organization exists
-        if (results.length === 0) {
-            return res.status(404).json({ error: 'Organization not found' });
-        }
-
-        // Send the organization details as a JSON response
-        res.status(200).json({ organization: results[0] });
-    });
-});
 
 
 //Login Section
@@ -718,6 +694,7 @@ app.post('/admin/other-bill/add', (req, res) => {
 });
 
 app.use('/announcements', announcementRouter);
+app.use('/user', userRouter);
 
 
 
