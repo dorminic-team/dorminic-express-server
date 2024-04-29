@@ -7,6 +7,9 @@ const jwt = require('jsonwebtoken');
 const { v4: uuidv4 } = require('uuid');
 const crypto = require('crypto');
 const session = require('express-session');
+const router = express.Router();
+
+const announcementRouter = require('./announcementRouter');
 
 const app = express();
 const port = 3000;
@@ -21,10 +24,10 @@ app.use(session({
 
 
 const connection = mysql.createConnection({
-    host: 'localhost',
+    host: '34.87.162.93',
     user: 'root',
-    password: 'password',
-    database: 'yourdb'
+    password: '{TcVK9Fc]F4+8pVX',
+    database: 'dorminic-data'
 });
 
 connection.connect((err) => {
@@ -71,6 +74,8 @@ async function fetchRoomsAndUserInfo(orgCode) {
     return rooms;
 }
 
+
+//Login Section
 app.post('/admin/register', async (req, res) => {
     const { username, password, firstname, lastname, org_code, verify_code } = req.body;
     const hashedPassword = await bcrypt.hash(password, 10);
@@ -233,7 +238,11 @@ app.post('/admin/login', (req, res) => {
       res.status(200).json({ token, refreshToken, userData });
     });
   });
-  
+
+
+
+
+
 
 app.post('/organization/add', (req, res) => {
     let org_code;
@@ -274,6 +283,7 @@ app.post('/organization/add', (req, res) => {
                     if (count === 0) {
                         insertOrganization();
                         createOrganizationTable();
+                        createAnnoucementOrganizationTable();
                     } else {
                         checkOrgCode(); // Generate new org_code and check again
                     }
@@ -302,7 +312,6 @@ app.post('/organization/add', (req, res) => {
         const createTableQuery = `
             CREATE TABLE ${tableName} (
                 room_number VARCHAR(10) PRIMARY KEY,
-                isRent BOOLEAN DEFAULT FALSE,
                 isPaidByTenant BOOLEAN DEFAULT FALSE,
                 tenant_id VARCHAR(36),
                 FOREIGN KEY (tenant_id) REFERENCES _user (uuid) ON DELETE SET NULL
@@ -315,6 +324,26 @@ app.post('/organization/add', (req, res) => {
             }
         });
     }
+
+    function createAnnoucementOrganizationTable() {
+        const tableName = `annoucement_organization_${org_code}`; // Generate table name based on org_code
+        const createTableQuery = `
+            CREATE TABLE ${tableName} (
+                announcement_id int NOT NULL AUTO_INCREMENT PRIMARY KEY,
+                topic VARCHAR(255),
+                description VARCHAR(255),
+                isExpired BOOLEAN DEFAULT FALSE
+            )
+        `;
+        connection.query(createTableQuery, (error, result) => {
+            if (error) {
+                console.error('Error creating organization table:', error);
+                res.status(500).send('Error creating organization table');
+            }
+        });
+    }
+
+
 
     checkOrgName(); // Start the process to check organization name uniqueness
 });
@@ -345,8 +374,6 @@ app.post('/admin/organization/getdetails', (req, res) => {
         res.status(200).json({ organization: results[0] });
     });
 });
-
-
 
 app.post('/admin/organization/getallroom', async (req, res) => {
     const { org_code } = req.body;
@@ -405,10 +432,46 @@ app.post('/admin/organization/addroom', (req, res) => {
     });
 });
 
+app.post('/admin/organization/removeroom', (req, res) => {
+    const { org_code, room_number } = req.body;
 
+    if (!org_code || !room_number) {
+        return res.status(400).send('Invalid request. Missing org_code or room_number.');
+    }
 
+    const tableName = `organization_${org_code}`; // Generate table name based on org_code
 
-app.post('/organization/user', (req, res) => {
+    // Check if room_number exists (using prepared statement for security)
+    const checkRoomQuery = `SELECT * FROM ${tableName} WHERE room_number = ?`;
+    const checkValues = [room_number];
+
+    connection.query(checkRoomQuery, checkValues, (checkError, checkResult) => {
+        if (checkError) {
+            console.error('Error checking room existence:', checkError);
+            return res.status(500).send('Error checking room existence');
+        }
+
+        if (checkResult.length === 0) {
+            // Room number doesn't exist, send a not-found response
+            return res.status(404).send('Room number not found');
+        }
+
+        // Room number exists, proceed with removal
+        const removeRoomQuery = `DELETE FROM ${tableName} WHERE room_number = ?`;
+        const removeValues = [room_number];
+
+        connection.query(removeRoomQuery, removeValues, (removeError, removeResult) => {
+            if (removeError) {
+                console.error('Error removing room from organization:', removeError);
+                return res.status(500).send('Error removing room');
+            }
+
+            res.status(200).send('Room removed successfully'); // Updated status code to 200 (OK)
+        });
+    });
+});
+
+app.post('/admin/organization/getalltenant', (req, res) => {
     const { org_code } = req.body;
 
     // Check if org_code is provided in the request body
@@ -437,7 +500,7 @@ app.post('/organization/user', (req, res) => {
 
 app.post('/admin/register-user-to-organization', (req, res) => {
     const { org_code, username } = req.body;
-
+    
     // Check if org_code and username are provided in the request body
     if (!org_code || !username) {
         return res.status(400).json({ error: 'org_code and username are required' });
@@ -475,26 +538,65 @@ app.post('/admin/register-user-to-organization', (req, res) => {
     });
 });
 
+app.post('/admin/remove-user-from-organization', (req, res) => {
+    const { uuid } = req.body;
+    
+    // Check if username is provided in the request body
+    if (!uuid) {
+        return res.status(400).json({ error: 'uuid is required' });
+    }
+
+    // Query to update org_code in _user table to null for the given username
+    const updateQuery = 'UPDATE _user SET org_code = NULL WHERE uuid = ?';
+    connection.query(updateQuery, [uuid], (err, updateResults) => {
+        if (err) {
+            console.error('Error removing user from organization:', err);
+            return res.status(500).json({ error: 'Error removing user from organization' });
+        }
+
+        // Check if the update operation affected any rows
+        if (updateResults.affectedRows === 0) {
+            return res.status(404).json({ error: 'User not found or already removed from organization' });
+        }
+
+        // User removed from organization successfully
+        res.status(200).json({ message: 'User removed from organization successfully' });
+    });
+});
+
 
 app.post('/admin/room/add-tenant', (req, res) => {
-    const { room_number, tenant_id, org_code } = req.body;
+    const { room_number, tenant_name, tenant_lastname, org_code } = req.body;
 
-    const tableName = `organization_${org_code}`; // Generate table name based on org_code
-    const updateRoomQuery = `
-        UPDATE ${tableName}
-        SET tenant_id = ?
-        WHERE room_number = ?
-    `;
-
-    connection.query(updateRoomQuery, [tenant_id, room_number], (error, result) => {
+    connection.query('SELECT uuid FROM _user WHERE firstname = ? AND lastname = ?', [tenant_name, tenant_lastname], (error, userResult) => {
         if (error) {
-            console.error('Error adding tenant to room:', error);
+            console.error('Error retrieving user UUID:', error);
             res.status(500).send('Error adding tenant to room');
         } else {
-            res.status(200).send('Tenant added to room successfully');
+            if (userResult.length > 0) {
+                const { uuid } = userResult[0]; // Assuming uuid is a field in table_user
+                const tableName = `organization_${org_code}`; // Generate table name based on org_code
+                const updateRoomQuery = `
+                    UPDATE ${tableName}
+                    SET tenant_id = ?, isPaidByTenant = 1
+                    WHERE room_number = ?
+                `;
+            
+                connection.query(updateRoomQuery, [uuid, room_number], (updateError, updateResult) => {
+                    if (updateError) {
+                        console.error('Error updating room:', updateError);
+                        res.status(500).send('Error adding tenant to room');
+                    } else {
+                        res.status(200).send('Tenant added to room successfully');
+                    }
+                });
+            } else {
+                res.status(404).send('Tenant not found');
+            }
         }
     });
 });
+
 
 app.post('/admin/room/remove-tenant', (req, res) => {
     const { room_number, org_code } = req.body;
@@ -515,8 +617,6 @@ app.post('/admin/room/remove-tenant', (req, res) => {
         }
     });
 });
-
-
 
 app.post('/admin/bill/add', (req, res) => {
     const { waterFee, electricFee, rentalFee, month, year, userId } = req.body;
@@ -589,6 +689,8 @@ app.post('/admin/other-bill/add', (req, res) => {
         });
     });
 });
+
+app.use('/announcements', announcementRouter);
 
 
 

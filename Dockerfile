@@ -1,16 +1,22 @@
-# Use the official phpMyAdmin image from Docker Hub
-FROM arm64v8/phpmyadmin
+# Use official Node.js image as the base image
+FROM node:21
 
-# Install the MySQL client in the phpMyAdmin container
-RUN apt-get update && \
-    apt-get install -y default-mysql-client
+# Set the working directory inside the container
+WORKDIR /usr/src/app
 
-# Set environment variables for MySQL connection
-#ENV PMA_HOST=34.66.40.176
-#ENV PMA_PORT=3306
-#ENV PMA_USER=root
-#ENV PMA_PASSWORD={TcVK9Fc]F4+8pVX
-#ENV MYSQL_ROOT_PASSWORD={TcVK9Fc]F4+8pVX
+# Copy package.json and package-lock.json
+COPY package*.json ./
 
-# Expose the phpMyAdmin port
-EXPOSE 2222
+# Install dependencies
+RUN npm install
+
+# Copy application files
+COPY index.js .
+COPY config.js .
+COPY announcementRouter.js .
+
+# Expose the port your app runs on
+EXPOSE 3000
+
+# Command to run your application
+CMD ["node", "index.js"]
