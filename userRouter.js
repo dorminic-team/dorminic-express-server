@@ -41,7 +41,7 @@ router.post('/organization/getdetails', async (req, res) => {
         if (results.length === 0) {
             return res.status(404).json({ error: 'Organization not found' });
         }
-
+        
         // Send the organization details as a JSON response
         res.status(200).json({ organization: results[0] });
     } catch (err) {
@@ -49,5 +49,31 @@ router.post('/organization/getdetails', async (req, res) => {
         return res.status(500).json({ error: 'Error fetching organization details' });
     }
 });
+
+router.post('/room/getdetails', async (req, res) => {
+    const { org_code, tenant_id } = req.body;
+    if (!org_code || !tenant_id) {
+        return res.status(400).json({ error: 'org_code and tenant_id are required' });
+    }
+
+    try {
+        const connection = await pool.getConnection();
+        const tableName = `organization_${org_code}`;
+        const query = `SELECT room_number FROM ${tableName} WHERE tenant_id = ?`;
+        const results = await connection.query(query, [tenant_id]);
+        connection.release();
+
+        if (results.length === 0) {
+            return res.status(404).json({ error: 'Room not found' });
+        }
+        
+        // Send room details as a JSON response
+        res.status(200).json({ room_number: results[0] });
+    } catch (error) {
+        console.error('Error fetching room details:', error);
+        return res.status(500).json({ error: 'Error fetching room details' });
+    }
+});
+
 
 module.exports = router;
