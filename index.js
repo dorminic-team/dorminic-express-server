@@ -11,6 +11,7 @@ const router = express.Router();
 
 const announcementRouter = require('./announcementRouter');
 const userRouter = require('./userRouter');
+const billRouter = require('./billRouter');
 
 const app = express();
 const port = 3000;
@@ -134,10 +135,10 @@ app.post('/register', async (req, res) => {
         USER: 'USER',
         ADMIN: 'ADMIN',
         MODERATOR: 'MODERATOR',
-      };
+    };
     const { username, password, firstname, lastname, role } = req.body;
     const hashedPassword = await bcrypt.hash(password, 10);
-    const uuid = uuidv4(); 
+    const uuid = uuidv4();
 
     // Check if username already exists
     connection.query('SELECT * FROM _user WHERE username = ?', [username], async (err, results) => {
@@ -154,7 +155,7 @@ app.post('/register', async (req, res) => {
 
         if (!Object.values(Roles).includes(role)) {
             return res.status(400).json({ error: 'Invalid role' });
-          }
+        }
 
         // Username is available, proceed with registration
         const newUser = { username, password: hashedPassword, uuid, firstname, lastname, role };
@@ -193,64 +194,60 @@ app.post('/login', (req, res) => {
             org_code: user.org_code,
             firstname: user.firstname,
             lastname: user.lastname
-          };
-        const token = jwt.sign({ userId: user.uuid}, 'secretKey', { expiresIn: '3m' });
+        };
+        const token = jwt.sign({ userId: user.uuid }, 'secretKey', { expiresIn: '3m' });
         const refreshToken = jwt.sign({ userId: user.uuid }, 'refreshsecretKey', { expiresIn: '1d' });
-        res.status(200).json({ token,  refreshToken, userData});
+        res.status(200).json({ token, refreshToken, userData });
     });
 });
 
 app.post('/admin/login', (req, res) => {
     const { username, password } = req.body;
     connection.query('SELECT * FROM _user WHERE username = ?', [username], async (err, results) => {
-      if (err) {
-        console.error('Error logging in:', err);
-        res.status(500).send('Error logging in');
-        return;
-      }
-      if (results.length === 0) {
-        res.status(401).send('Invalid username or password');
-        return;
-      }
-      const user = results[0];
-      const isPasswordValid = await bcrypt.compare(password, user.password);
-      if (!isPasswordValid) {
-        res.status(401).send('Invalid username or password');
-        return;
-      }
-  
-      // Check if user has the ADMIN role
-      if (user.role !== 'ADMIN') {
-        res.status(403).send('Access denied. Only ADMIN users are allowed to login.');
-        return;
-      }
-  
-      req.session.userId = user.uuid;
-      req.session.role = user.role;
-  
-      const token = jwt.sign({ userId: user.uuid }, 'secretKey', { expiresIn: '3m' });
-      const refreshToken = jwt.sign({ userId: user.uuid }, 'refreshsecretKey', { expiresIn: '1d' });
-      const userData = {
-        userId: user.uuid,
-        username: user.username,
-        org_code: user.org_code,
-        firstname: user.firstname,
-        lastname: user.lastname,
-        role: user.role
-      };
-      res.status(200).json({ token, refreshToken, userData });
+        if (err) {
+            console.error('Error logging in:', err);
+            res.status(500).send('Error logging in');
+            return;
+        }
+        if (results.length === 0) {
+            res.status(401).send('Invalid username or password');
+            return;
+        }
+        const user = results[0];
+        const isPasswordValid = await bcrypt.compare(password, user.password);
+        if (!isPasswordValid) {
+            res.status(401).send('Invalid username or password');
+            return;
+        }
+
+        // Check if user has the ADMIN role
+        if (user.role !== 'ADMIN') {
+            res.status(403).send('Access denied. Only ADMIN users are allowed to login.');
+            return;
+        }
+
+        req.session.userId = user.uuid;
+        req.session.role = user.role;
+
+        const token = jwt.sign({ userId: user.uuid }, 'secretKey', { expiresIn: '3m' });
+        const refreshToken = jwt.sign({ userId: user.uuid }, 'refreshsecretKey', { expiresIn: '1d' });
+        const userData = {
+            userId: user.uuid,
+            username: user.username,
+            org_code: user.org_code,
+            firstname: user.firstname,
+            lastname: user.lastname,
+            role: user.role
+        };
+        res.status(200).json({ token, refreshToken, userData });
     });
-  });
-
-
-
-
+});
 
 
 app.post('/organization/add', (req, res) => {
     let org_code;
     let verify_code = generateRandomCode(); // Generate verify_code
-    const { name, description } = req.body;
+    const { name, description, promptpay } = req.body;
 
     function checkOrgName() {
         connection.query(
@@ -286,7 +283,6 @@ app.post('/organization/add', (req, res) => {
                     if (count === 0) {
                         insertOrganization();
                         createOrganizationTable();
-                        createAnnoucementOrganizationTable();
                     } else {
                         checkOrgCode(); // Generate new org_code and check again
                     }
@@ -297,8 +293,8 @@ app.post('/organization/add', (req, res) => {
 
     function insertOrganization() {
         connection.query(
-            'INSERT INTO _organization (name, description, org_code, verify_code) VALUES (?, ?, ?, ?)',
-            [name, description, org_code, verify_code],
+            'INSERT INTO _organization (name, description, org_code, verify_code, promptpay) VALUES (?, ?, ?, ?, ?)',
+            [name, description, org_code, verify_code, promptpay], // Pass promptpay as a parameter
             (error, result) => {
                 if (error) {
                     console.error('Error adding organization:', error);
@@ -315,15 +311,18 @@ app.post('/organization/add', (req, res) => {
         const createTableQuery = `
             CREATE TABLE ${tableName} (
                 room_number VARCHAR(10) PRIMARY KEY,
-                isPaidByTenant BOOLEAN DEFAULT FALSE,
-                tenant_id VARCHAR(36),
-                FOREIGN KEY (tenant_id) REFERENCES _user (uuid) ON DELETE SET NULL
-            )
+    tenant_id VARCHAR(36),
+    FOREIGN KEY (tenant_id) REFERENCES _user (uuid) ON DELETE SET NULL
+            )CHARACTER SET latin1 COLLATE latin1_swedish_ci;
         `;
         connection.query(createTableQuery, (error, result) => {
             if (error) {
                 console.error('Error creating organization table:', error);
                 res.status(500).send('Error creating organization table');
+            } else {
+                createAnnoucementOrganizationTable();
+                createBillOrganizationTable();
+                createOtherBillOrganizationTable(); // Create announcement table
             }
         });
     }
@@ -336,7 +335,59 @@ app.post('/organization/add', (req, res) => {
                 topic VARCHAR(255),
                 description VARCHAR(255),
                 isExpired BOOLEAN DEFAULT FALSE
-            )
+            )CHARACTER SET latin1 COLLATE latin1_swedish_ci;
+        `;
+        connection.query(createTableQuery, (error, result) => {
+            if (error) {
+                console.error('Error creating organization table:', error);
+                res.status(500).send('Error creating organization table');
+            }
+        });
+    }
+
+    function createBillOrganizationTable() {
+        const tableName = `bill_organization_${org_code}`; // Generate table name based on org_code
+        const createTableQuery = `
+            CREATE TABLE ${tableName} (
+                bill_id INT PRIMARY KEY AUTO_INCREMENT,
+    org_code VARCHAR(8) COLLATE latin1_swedish_ci,
+    water_fee DECIMAL(10,2),
+    electric_fee DECIMAL(10,2),
+    rental_fee DECIMAL(10,2),
+    month INT,
+    year INT,
+    isPaid TINYINT(1),
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    user_id VARCHAR(36) COLLATE latin1_swedish_ci,
+    room_number VARCHAR(10),
+    FOREIGN KEY (room_number) REFERENCES organization_${org_code}(room_number) ON DELETE SET NULL
+            )CHARACTER SET latin1 COLLATE latin1_swedish_ci;
+        `;
+        connection.query(createTableQuery, (error, result) => {
+            if (error) {
+                console.error('Error creating organization table:', error);
+                res.status(500).send('Error creating organization table');
+            }
+        });
+    }
+
+    function createOtherBillOrganizationTable() {
+        const tableName = `otherbill_organization_${org_code}`; // Generate table name based on org_code
+        const createTableQuery = `
+            CREATE TABLE ${tableName} (
+                bill_id INT PRIMARY KEY AUTO_INCREMENT,
+    org_code VARCHAR(8) COLLATE latin1_swedish_ci,
+    topic VARCHAR(255),
+    description VARCHAR(255),
+    fee DECIMAL(10,2),
+    month INT,
+    year INT,
+    isPaid TINYINT(1),
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    user_id VARCHAR(36) COLLATE latin1_swedish_ci,
+    room_number VARCHAR(10),
+    FOREIGN KEY (room_number) REFERENCES organization_${org_code}(room_number) ON DELETE SET NULL
+            )CHARACTER SET latin1 COLLATE latin1_swedish_ci;
         `;
         connection.query(createTableQuery, (error, result) => {
             if (error) {
@@ -503,7 +554,7 @@ app.post('/admin/organization/getalltenant', (req, res) => {
 
 app.post('/admin/register-user-to-organization', (req, res) => {
     const { org_code, username } = req.body;
-    
+
     // Check if org_code and username are provided in the request body
     if (!org_code || !username) {
         return res.status(400).json({ error: 'org_code and username are required' });
@@ -543,7 +594,7 @@ app.post('/admin/register-user-to-organization', (req, res) => {
 
 app.post('/admin/remove-user-from-organization', (req, res) => {
     const { uuid } = req.body;
-    
+
     // Check if username is provided in the request body
     if (!uuid) {
         return res.status(400).json({ error: 'uuid is required' });
@@ -584,7 +635,7 @@ app.post('/admin/room/add-tenant', (req, res) => {
                     SET tenant_id = ?, isPaidByTenant = 1
                     WHERE room_number = ?
                 `;
-            
+
                 connection.query(updateRoomQuery, [uuid, room_number], (updateError, updateResult) => {
                     if (updateError) {
                         console.error('Error updating room:', updateError);
@@ -621,80 +672,9 @@ app.post('/admin/room/remove-tenant', (req, res) => {
     });
 });
 
-app.post('/admin/bill/add', (req, res) => {
-    const { waterFee, electricFee, rentalFee, month, year, userId } = req.body;
-
-    // Check if waterFee, electricFee, rentalFee, month, year, and userId are provided in the request body
-    if (!waterFee || !electricFee || !rentalFee || !month || !year || !userId) {
-        return res.status(400).json({ error: 'waterFee, electricFee, rentalFee, month, year, and userId are required' });
-    }
-
-    // Check if the organization code in the bill matches the organization code of the user
-    const orgCheckQuery = 'SELECT * FROM _user WHERE uuid = ?';
-    connection.query(orgCheckQuery, [userId], (orgCheckErr, orgCheckResults) => {
-        if (orgCheckErr) {
-            console.error('Error checking organization:', orgCheckErr);
-            return res.status(500).json({ error: 'Error checking organization' });
-        }
-
-        if (orgCheckResults.length === 0) {
-            return res.status(404).json({ error: 'User not found' });
-        }
-
-        const userOrgCode = orgCheckResults[0].org_code;
-
-        // Insert the bill details into the database
-        const query = 'INSERT INTO _bills (org_code, water_fee, electric_fee, rental_fee, month, year, user_id) VALUES (?, ?, ?, ?, ?, ?, ?)';
-        connection.query(query, [userOrgCode, waterFee, electricFee, rentalFee, month, year, userId], (err, results) => {
-            if (err) {
-                console.error('Error adding bill:', err);
-                return res.status(500).json({ error: 'Error adding bill' });
-            }
-
-            // Bill added successfully
-            res.status(201).json({ message: 'Bill added successfully' });
-        });
-    });
-});
-
-app.post('/admin/other-bill/add', (req, res) => {
-    const { billName, description, amount, month, year, userId } = req.body;
-
-    // Check if billName, description, amount, month, year, and userId are provided in the request body
-    if (!billName || !description || !amount || !month || !year || !userId) {
-        return res.status(400).json({ error: 'billName, description, amount, month, year, and userId are required' });
-    }
-
-    // Check if the organization code in the bill matches the organization code of the user
-    const orgCheckQuery = 'SELECT org_code FROM _user WHERE uuid = ?';
-    connection.query(orgCheckQuery, [userId], (orgCheckErr, orgCheckResults) => {
-        if (orgCheckErr) {
-            console.error('Error checking organization:', orgCheckErr);
-            return res.status(500).json({ error: 'Error checking organization' });
-        }
-
-        if (orgCheckResults.length === 0) {
-            return res.status(404).json({ error: 'User not found' });
-        }
-
-        const userOrgCode = orgCheckResults[0].org_code;
-
-        // Insert the bill details into the database
-        const query = 'INSERT INTO _otherbills (org_code, bill_name, description, amount, month, year, user_id) VALUES (?, ?, ?, ?, ?, ?, ?)';
-        connection.query(query, [userOrgCode, billName, description, amount, month, year, userId], (err, results) => {
-            if (err) {
-                console.error('Error adding bill:', err);
-                return res.status(500).json({ error: 'Error adding bill' });
-            }
-
-            // Bill added successfully
-            res.status(201).json({ message: 'Bill added successfully' });
-        });
-    });
-});
-
 app.use('/announcements', announcementRouter);
 app.use('/user', userRouter);
+app.use('/bill', billRouter );
 
 
 
