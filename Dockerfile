@@ -15,6 +15,7 @@ COPY index.js .
 COPY config.js .
 COPY announcementRouter.js .
 COPY userRouter.js .
+COPY billRouter.js .
 
 # Expose the port your app runs on
 EXPOSE 3000
