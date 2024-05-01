@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bill Management</title>
+</head>
+
+<body>
+    <h1>Bill Management</h1>
+    <a href="Announcement-Management.html"></a>
+
+    <!-- Form to create a new bill -->
+    <h2>Create New Bill</h2>
+    <form id="createBillForm">
+        <label for="orgCode">Organization Code:</label>
+        <input type="text" id="orgCode" name="orgCode" required><br>
+        <label for="waterFee">Water Fee:</label>
+        <input type="number" id="waterFee" name="waterFee" required><br>
+        <label for="electricFee">Electric Fee:</label>
+        <input type="number" id="electricFee" name="electricFee" required><br>
+        <label for="rentalFee">Rental Fee:</label>
+        <input type="number" id="rentalFee" name="rentalFee" required><br>
+        <label for="month">Month:</label>
+        <input type="text" id="month" name="month" required><br>
+        <label for="year">Year:</label>
+        <input type="text" id="year" name="year" required><br>
+        <label for="isPaid">Is Paid:</label>
+        <select id="isPaid" name="isPaid" required>
+            <option value="0">No</option>
+            <option value="1">Yes</option>
+        </select><br>
+        <label for="userId">User ID:</label>
+        <input type="text" id="userId" name="userId" required><br>
+        <label for="roomNumber">Room Number:</label>
+        <input type="text" id="roomNumber" name="roomNumber" required><br>
+        <button type="submit">Create Bill</button>
+    </form>
+
+    <hr>
+
+    <!-- Form to update an existing bill -->
+    <h2>Update Bill</h2>
+    <form id="updateBillForm">
+        <label for="updateBillId">Bill ID:</label>
+        <input type="text" id="updateBillId" name="updateBillId" required><br>
+        <!-- Include fields to update -->
+        <button type="submit">Update Bill</button>
+    </form>
+
+    <hr>
+
+    <!-- Form to delete an existing bill -->
+    <h2>Delete Bill</h2>
+    <form id="deleteBillForm">
+        <label for="deleteBillId">Bill ID:</label>
+        <input type="text" id="deleteBillId" name="deleteBillId" required><br>
+        <button type="submit">Delete Bill</button>
+    </form>
+
+    <!-- Display area for API responses -->
+    <div id="apiResponse"></div>
+
+    <!-- JavaScript to handle form submissions and API requests -->
+    <script>
+        async function makeRequest(url, method, data) {
+            try {
+                const response = await fetch(url, {
+                    method: method,
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(data),
+                });
+                const responseData = await response.text();
+                return responseData;
+            } catch (error) {
+                console.error('Error:', error);
+            }
+        }
+
+        // Event listener for createBillForm submission
+        document.getElementById('createBillForm').addEventListener('submit', async (event) => {
+            event.preventDefault();
+            const form = event.target;
+            const orgCode = form.elements['orgCode'].value;
+            const waterFee = form.elements['waterFee'].value;
+            const electricFee = form.elements['electricFee'].value;
+            const rentalFee = form.elements['rentalFee'].value;
+            const month = form.elements['month'].value;
+            const year = form.elements['year'].value;
+            const isPaid = form.elements['isPaid'].value;
+            const userId = form.elements['userId'].value;
+            const roomNumber = form.elements['roomNumber'].value;
+            const apiUrl = `https://dorminic-express-server-7zemj3wqeq-de.a.run.app/bills/${orgCode}`;
+
+            const data = {
+                org_code: orgCode,
+                water_fee: waterFee,
+                electric_fee: electricFee,
+                rental_fee: rentalFee,
+                month: month,
+                year: year,
+                isPaid: isPaid,
+                user_id: userId,
+                room_number: roomNumber,
+            };
+
+            const response = await makeRequest(apiUrl, 'POST', data);
+            document.getElementById('apiResponse').textContent = response;
+        });
+
+        // Event listener for updateBillForm submission
+        document.getElementById('updateBillForm').addEventListener('submit', async (event) => {
+            event.preventDefault();
+            const form = event.target;
+            const billId = form.elements['updateBillId'].value;
+            // Include fields to update in the data object
+            const apiUrl = `/bills/${orgCode}/${billId}`;
+
+            const data = {
+                // Include fields to update
+            };
+
+            const response = await makeRequest(apiUrl, 'PUT', data);
+            document.getElementById('apiResponse').textContent = response;
+        });
+
+        // Event listener for deleteBillForm submission
+        document.getElementById('deleteBillForm').addEventListener('submit', async (event) => {
+            event.preventDefault();
+            const form = event.target;
+            const billId = form.elements['deleteBillId'].value;
+            const apiUrl = `/bills/${orgCode}/${billId}`;
+
+            const response = await makeRequest(apiUrl, 'DELETE');
+            document.getElementById('apiResponse').textContent = response;
+        });
+    </script>
+</body>
+
+</html>
