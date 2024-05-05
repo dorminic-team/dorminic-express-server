@@ -7,9 +7,7 @@ const pool = mysql.createPool({
   user: process.env.DB_LOCAL_USER,
   password: process.env.DB_LOCAL_PASSWORD,
   database: process.env.DB_LOCAL_DATABASE,
-  waitForConnections: true,
   connectionLimit: 10,
-  queueLimit: 0
 });
 
 // Export the pool for use in other parts of your application
