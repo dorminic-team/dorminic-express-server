@@ -72,7 +72,6 @@ router.post('/register', async (req, res) => {
 
     pool.getConnection((err, connection) => {
       if (err) {
-        console.error('Error getting MySQL connection:', err);
         return res.status(500).json({ error: 'Database error' });
       }
 
@@ -88,7 +87,7 @@ router.post('/register', async (req, res) => {
         }
 
         // User registration successful
-        return res.status(200).json({ message: 'User registered successfully', userId });
+        return res.status(200).json({ message: 'User registered successfully'});
       });
     });
   } catch (err) {
@@ -137,7 +136,7 @@ const generateRefreshToken = (userId) => {
 };
 
 const generateAccessToken = (userId) => {
-  return jwt.sign({ userId }, process.env.JWT_SECRET, { expiresIn: '30s' });
+  return jwt.sign({ userId }, process.env.JWT_SECRET, { expiresIn: '1h' });
 };
 
 router.post('/refresh-token', async (req, res) => {

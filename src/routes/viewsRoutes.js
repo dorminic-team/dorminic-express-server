@@ -6,7 +6,7 @@ const {requireLogin} = require('../api/auth');
 router.use(express.json());
 
 
-router.get('/', requireLogin ,  (req, res) => {
+router.get('/'/*, requireLogin */,  (req, res) => {
     res.sendFile(path.join(__dirname, '../views/index.html'));
 });
 
