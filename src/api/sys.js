@@ -8,10 +8,12 @@ const pool = require('../config/pool');
 async function createOrganizationTables(org_code) {
     const roomTableName = `${org_code}_room`;
     const createRoomTableQuery = `CREATE TABLE ${roomTableName} (
-        id VARCHAR(10) PRIMARY KEY,
+        id INT PRIMARY KEY AUTO_INCREMENT,
         name VARCHAR(255) NOT NULL,
         description TEXT,
-        is_active ENUM('yes', 'no') DEFAULT 'yes'
+        is_active ENUM('yes', 'no') DEFAULT 'yes',
+        tenant_id VARCHAR(36),
+        FOREIGN KEY (tenant_id) REFERENCES _User(id)
     )`;
     await pool.promise().query(createRoomTableQuery);
 
@@ -24,7 +26,7 @@ async function createOrganizationTables(org_code) {
         cost DOUBLE,
         is_paid ENUM('yes', 'no') DEFAULT 'no',
         created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-        room_id VARCHAR(10),
+        room_id INT,
         customer_id VARCHAR(36),
         informant_id VARCHAR(36),
         FOREIGN KEY (room_id) REFERENCES ${roomTableName}(id),
@@ -53,7 +55,7 @@ async function createOrganizationTables(org_code) {
             is_fixed ENUM('yes', 'no') DEFAULT 'no',
             created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
             informant_id VARCHAR(36),
-            room_id VARCHAR(10),
+            room_id INT,
             FOREIGN KEY (informant_id) REFERENCES _User(id),
             FOREIGN KEY (room_id) REFERENCES ${roomTableName}(id)
         )`;
@@ -67,7 +69,7 @@ async function createOrganizationTables(org_code) {
         is_received ENUM('yes', 'no') DEFAULT 'no',
         created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
         informant_id VARCHAR(36),
-        room_id VARCHAR(10),
+        room_id INT,
         FOREIGN KEY (informant_id) REFERENCES _User(id),
         FOREIGN KEY (room_id) REFERENCES ${roomTableName}(id)
     )`;

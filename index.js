@@ -2,10 +2,12 @@ const express = require('express');
 const app = express();
 const port = process.env.PORT || 3000;
 require('dotenv').config();
+const path = require('path');
 //api
 const { router: authRouter, requireLogin, setupSessionMiddleware } = require('./src/api/auth');
 const { router: sysRouter} = require('./src/api/sys');
 const { router: adminRouter} = require('./src/api/admin');
+
 //views
 const viewsRoutes = require('./src/routes/viewsRoutes');
 const authRoutes = require('./src/routes/authRouters');
@@ -33,7 +35,8 @@ app.get('/test', async (req, res) => {
     res.status(500).json({ message: 'Error connecting to database' });
   }
 });
-app.use('/'/*, requireLogin*/, viewsRoutes);
+app.use('/', viewsRoutes);
+app.use(express.static(path.join(__dirname, 'src', 'views')));
 
 // Start the server
 app.listen(port, () => {
