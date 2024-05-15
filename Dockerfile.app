@@ -16,5 +16,7 @@ COPY . .
 # Expose port 3000 for Express.js
 EXPOSE 3000
 
+ENV $(cat .env | grep -v ^# | xargs)
+
 # Command to start the Express.js application
 CMD ["npm", "start"]
