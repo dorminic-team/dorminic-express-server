@@ -1,0 +1,13 @@
+steps:
+  - name: 'gcr.io/cloud-builders/docker'
+    args: ['build', '-t', 'gcr.io/server-api-dorminic-co/mysql', '-f', 'Dockerfile.mysql', '.']
+  - name: 'gcr.io/cloud-builders/docker'
+    args: ['build', '-t', 'gcr.io/server-api-dorminic-co/phpmyadmin', '-f', 'Dockerfile.phpmyadmin', '.']
+  - name: 'gcr.io/cloud-builders/docker'
+    args: ['build', '-t', 'gcr.io/server-api-dorminic-co/app', '-f', 'Dockerfile.app', '.']
+  - name: 'gcr.io/cloud-builders/docker'
+    args: ['push', 'gcr.io/server-api-dorminic-co/mysql']
+  - name: 'gcr.io/cloud-builders/docker'
+    args: ['push', 'gcr.io/server-api-dorminic-co/phpmyadmin']
+  - name: 'gcr.io/cloud-builders/docker'
+    args: ['push', 'gcr.io/server-api-dorminic-co/app']

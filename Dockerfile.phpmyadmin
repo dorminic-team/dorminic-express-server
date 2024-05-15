@@ -2,5 +2,5 @@
 FROM phpmyadmin/phpmyadmin:latest
 
 # Set environment variables for phpMyAdmin
-ENV PMA_HOST=db
-ENV MYSQL_ROOT_PASSWORD=root_password
+ENV PMA_HOST=root
+ENV MYSQL_ROOT_PASSWORD={TcVK9Fc]F4+8pVX
