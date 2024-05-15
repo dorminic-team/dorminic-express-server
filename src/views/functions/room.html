@@ -1,0 +1,511 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+   <meta charset="UTF-8">
+   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+   <link href="https://cdnjs.cloudflare.com/ajax/libs/flowbite/2.3.0/flowbite.min.css" rel="stylesheet" />
+   <link rel="icon" href="/assets/Logo.png" type="image/x-icon" />
+   <title>Room Assets</title>
+</head>
+
+<body>
+   <nav class="fixed top-0 z-50 w-full bg-white border-b border-gray-200 dark:bg-gray-800 dark:border-gray-700">
+      <div class="px-3 py-3 lg:px-5 lg:pl-3">
+         <div class="flex items-center justify-between">
+            <div class="flex items-center justify-start rtl:justify-end">
+               <button data-drawer-target="logo-sidebar" data-drawer-toggle="logo-sidebar" aria-controls="logo-sidebar"
+                  type="button"
+                  class="inline-flex items-center p-2 text-sm text-gray-500 rounded-lg sm:hidden hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-gray-200 dark:text-gray-400 dark:hover:bg-gray-700 dark:focus:ring-gray-600">
+                  <span class="sr-only">Open sidebar</span>
+                  <svg class="w-6 h-6" aria-hidden="true" fill="currentColor" viewBox="0 0 20 20"
+                     xmlns="http://www.w3.org/2000/svg">
+                     <path clip-rule="evenodd" fill-rule="evenodd"
+                        d="M2 4.75A.75.75 0 012.75 4h14.5a.75.75 0 010 1.5H2.75A.75.75 0 012 4.75zm0 10.5a.75.75 0 01.75-.75h7.5a.75.75 0 010 1.5h-7.5a.75.75 0 01-.75-.75zM2 10a.75.75 0 01.75-.75h14.5a.75.75 0 010 1.5H2.75A.75.75 0 012 10z">
+                     </path>
+                  </svg>
+               </button>
+               <a href="https://flowbite.com" class="flex ms-2 md:me-24">
+                  <img src="/assets/Logo.png" class="h-8 me-3" alt="Logo" />
+                  <span
+                     class="self-center text-xl font-semibold sm:text-2xl whitespace-nowrap dark:text-white">Dorminic.co</span>
+               </a>
+            </div>
+            <div class="flex items-center">
+               <div class="flex items-center ms-3">
+                  <div>
+                     <button type="button"
+                        class="flex text-sm bg-gray-800 rounded-full focus:ring-4 focus:ring-gray-300 dark:focus:ring-gray-600"
+                        aria-expanded="false" data-dropdown-toggle="dropdown-user">
+                        <span class="sr-only">Open user menu</span>
+                        <img class="w-8 h-8 rounded-full"
+                           src="https://flowbite.com/docs/images/people/profile-picture-5.jpg" alt="user photo">
+                     </button>
+                  </div>
+                  <div
+                     class="z-50 hidden my-4 text-base list-none bg-white divide-y divide-gray-100 rounded shadow dark:bg-gray-700 dark:divide-gray-600"
+                     id="dropdown-user">
+                     <div class="px-4 py-3" role="none">
+                        <p class="text-sm text-gray-900 dark:text-white" role="none">
+                           Neil Sims
+                        </p>
+                        <p class="text-sm font-medium text-gray-900 truncate dark:text-gray-300" role="none">
+                           neil.sims@flowbite.com
+                        </p>
+                     </div>
+                     <ul class="py-1" role="none">
+                        <li>
+                           <a href="#"
+                              class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-600 dark:hover:text-white"
+                              role="menuitem">Dashboard</a>
+                        </li>
+                        <li>
+                           <a href="#"
+                              class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-600 dark:hover:text-white"
+                              role="menuitem">Settings</a>
+                        </li>
+                        <li>
+                           <a href="#"
+                              class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-600 dark:hover:text-white"
+                              role="menuitem">Earnings</a>
+                        </li>
+                        <li>
+                           <a href="/logout"
+                              class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-600 dark:hover:text-white"
+                              role="menuitem">Sign out</a>
+                        </li>
+                     </ul>
+                  </div>
+               </div>
+            </div>
+         </div>
+      </div>
+   </nav>
+
+   <aside id="logo-sidebar"
+      class="fixed top-0 left-0 z-40 w-64 h-screen pt-20 transition-transform -translate-x-full bg-white border-r border-gray-200 sm:translate-x-0 dark:bg-gray-800 dark:border-gray-700"
+      aria-label="Sidebar">
+      <div class="h-full px-3 pb-4 overflow-y-auto bg-white dark:bg-gray-800">
+         <ul class="space-y-2 font-medium">
+            <!-- Dashboard -->
+            <li>
+               <a href="/"
+                  class="flex items-center justify-start p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group">
+                  <svg
+                     class="w-5 h-5 text-gray-500 transition duration-75 dark:text-gray-400 group-hover:text-gray-900 dark:group-hover:text-white"
+                     aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 22 21">
+                     <path
+                        d="M16.975 11H10V4.025a1 1 0 0 0-1.066-.998 8.5 8.5 0 1 0 9.039 9.039.999.999 0 0 0-1-1.066h.002Z" />
+                     <path
+                        d="M12.5 0c-.157 0-.311.01-.565.027A1 1 0 0 0 11 1.02V10h8.975a1 1 0 0 0 1-.935c.013-.188.028-.374.028-.565A8.51 8.51 0 0 0 12.5 0Z" />
+                  </svg>
+                  <span class="flex-1 ms-3 whitespace-nowrap">Dashboard</span>
+               </a>
+            </li>
+            <!-- Room -->
+            <li>
+               <a href="/room"
+                  class="flex items-center justify-start p-2 bg-blue-100 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group">
+                  <svg
+                     class="flex-shrink-0 w-5 h-5 text-gray-500 transition duration-75 dark:text-gray-400 group-hover:text-gray-900 dark:group-hover:text-white"
+                     aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 18 18">
+                     <path
+                        d="M6.143 0H1.857A1.857 1.857 0 0 0 0 1.857v4.286C0 7.169.831 8 1.857 8h4.286A1.857 1.857 0 0 0 8 6.143V1.857A1.857 1.857 0 0 0 6.143 0Zm10 0h-4.286A1.857 1.857 0 0 0 10 1.857v4.286C10 7.169 10.831 8 11.857 8h4.286A1.857 1.857 0 0 0 18 6.143V1.857A1.857 1.857 0 0 0 16.143 0Zm-10 10H1.857A1.857 1.857 0 0 0 0 11.857v4.286C0 17.169.831 18 1.857 18h4.286A1.857 1.857 0 0 0 8 16.143v-4.286A1.857 1.857 0 0 0 6.143 10Zm10 0h-4.286A1.857 1.857 0 0 0 10 11.857v4.286c0 1.026.831 1.857 1.857 1.857h4.286A1.857 1.857 0 0 0 18 16.143v-4.286A1.857 1.857 0 0 0 16.143 10Z" />
+                  </svg>
+                  <span class="flex-1 ms-3 whitespace-nowrap">Room Assets</span>
+                  <!--<span class="inline-flex items-center justify-center px-2 ms-3 text-sm font-medium text-gray-800 bg-gray-100 rounded-full dark:bg-gray-700 dark:text-gray-300">Pro</span>-->
+               </a>
+            </li>
+            <!-- Announcement -->
+            <li>
+               <a href="/announcement"
+                  class="flex items-center justify-start p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group">
+                  <svg class="w-6 h-6 text-gray-500 dark:text-white" aria-hidden="true"
+                     xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" viewBox="0 0 24 24">
+                     <path fill-rule="evenodd"
+                        d="M18.458 3.11A1 1 0 0 1 19 4v16a1 1 0 0 1-1.581.814L12 16.944V7.056l5.419-3.87a1 1 0 0 1 1.039-.076ZM22 12c0 1.48-.804 2.773-2 3.465v-6.93c1.196.692 2 1.984 2 3.465ZM10 8H4a1 1 0 0 0-1 1v6a1 1 0 0 0 1 1h6V8Zm0 9H5v3a1 1 0 0 0 1 1h3a1 1 0 0 0 1-1v-3Z"
+                        clip-rule="evenodd" />
+                  </svg>
+
+                  <span class="flex-1 ms-3 whitespace-nowrap">Announcement</span>
+                  <!--<span class="inline-flex items-center justify-center w-3 h-3 p-3 ms-3 text-sm font-medium text-blue-800 bg-blue-100 rounded-full dark:bg-blue-900 dark:text-blue-300">3</span>-->
+               </a>
+            </li>
+            <!-- Billing System -->
+            <li>
+               <a href="/bills"
+                  class="flex items-center justify-start p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group">
+
+                  <svg
+                     class="flex-shrink-0 w-6 h-6 text-gray-500 transition duration-75 dark:text-gray-400 group-hover:text-gray-900 dark:group-hover:text-white"
+                     aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor"
+                     viewBox="0 0 24 24">
+                     <path fill-rule="evenodd"
+                        d="M9 7V2.221a2 2 0 0 0-.5.365L4.586 6.5a2 2 0 0 0-.365.5H9Zm2 0V2h7a2 2 0 0 1 2 2v16a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V9h5a2 2 0 0 0 2-2Zm2-2a1 1 0 1 0 0 2h3a1 1 0 1 0 0-2h-3Zm0 3a1 1 0 1 0 0 2h3a1 1 0 1 0 0-2h-3Zm-6 4a1 1 0 0 1 1-1h8a1 1 0 0 1 1 1v6a1 1 0 0 1-1 1H8a1 1 0 0 1-1-1v-6Zm8 1v1h-2v-1h2Zm0 3h-2v1h2v-1Zm-4-3v1H9v-1h2Zm0 3H9v1h2v-1Z"
+                        clip-rule="evenodd" />
+                  </svg>
+
+                  <span class="flex-1 ms-3 whitespace-nowrap">Billing System</span>
+               </a>
+            </li>
+            <!-- Maintenance -->
+            <li>
+               <a href="/maintenance"
+                  class="flex items-center justify-start p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group">
+                  <svg class="w-6 h-6 text-gray-500 dark:text-white" aria-hidden="true"
+                     xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" viewBox="0 0 24 24">
+                     <path fill-rule="evenodd"
+                        d="M5 3a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-3a2 2 0 0 0-2-2h-1v3a1 1 0 1 1-2 0v-3h-1v3a1 1 0 1 1-2 0v-3h-1v3a1 1 0 1 1-2 0v-3H7a1 1 0 1 1 0-2h3v-1H7a1 1 0 1 1 0-2h3V8H7a1 1 0 0 1 0-2h3V5a2 2 0 0 0-2-2H5Z"
+                        clip-rule="evenodd" />
+                  </svg>
+
+                  <span class="flex-1 ms-3 whitespace-nowrap">Maintenance</span>
+               </a>
+            </li>
+            <!-- Mail -->
+            <li>
+               <a href="/mail"
+                  class="flex items-center justify-start p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group">
+                  <svg
+                     class="flex-shrink-0 w-5 h-5 text-gray-500 transition duration-75 dark:text-gray-400 group-hover:text-gray-900 dark:group-hover:text-white"
+                     aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 20">
+                     <path
+                        d="m17.418 3.623-.018-.008a6.713 6.713 0 0 0-2.4-.569V2h1a1 1 0 1 0 0-2h-2a1 1 0 0 0-1 1v2H9.89A6.977 6.977 0 0 1 12 8v5h-2V8A5 5 0 1 0 0 8v6a1 1 0 0 0 1 1h8v4a1 1 0 0 0 1 1h2a1 1 0 0 0 1-1v-4h6a1 1 0 0 0 1-1V8a5 5 0 0 0-2.582-4.377ZM6 12H4a1 1 0 0 1 0-2h2a1 1 0 0 1 0 2Z" />
+                  </svg>
+                  <span class="flex-1 ms-3 whitespace-nowrap">Mail Service</span>
+               </a>
+            </li>
+         </ul>
+      </div>
+   </aside>
+
+
+   <div class="p-4 sm:ml-64">
+      <div class="p-4 border-0 border-gray-200 border-dashed rounded-lg dark:border-gray-700 mt-14">
+         <!-- Button Panel -->
+         <h1 class="text-2xl text-gray-900 p-5 font-semibold uppercase">Room / Assesment Management</h1>
+         <div class="flex justify-end items-center rounded-md mb-4" role="group">
+            <button type="button" data-modal-target="crud-modal" data-modal-toggle="crud-modal"
+               class="inline-flex items-center px-4 py-2 text-sm font-medium text-gray-900 bg-green-200 border border-green-800 rounded-lg hover:bg-green-900 hover:text-white focus:z-10 focus:ring-2 focus:ring-gray-500 focus:bg-gray-900 focus:text-white dark:border-white dark:text-white dark:hover:text-white dark:hover:bg-gray-700 dark:focus:bg-gray-700">
+               <svg class="w-4 h-4 me-2" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor"
+                  viewBox="0 0 24 24">
+                  <path fill-rule="evenodd"
+                     d="M2 12C2 6.477 6.477 2 12 2s10 4.477 10 10-4.477 10-10 10S2 17.523 2 12Zm11-4.243a1 1 0 1 0-2 0V11H7.757a1 1 0 1 0 0 2H11v3.243a1 1 0 1 0 2 0V13h3.243a1 1 0 1 0 0-2H13V7.757Z"
+                     clip-rule="evenodd" />
+               </svg>
+               Add Room
+            </button>
+         </div>
+
+
+
+
+
+         <div class="relative overflow-x-auto sm:rounded-lg border border-gray-300">
+            <table id="roomTable" class="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
+               <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
+                  <tr>
+                     <th scope="col" class="px-4 py-3">
+                        Room
+                     </th>
+                     <th scope="col" class="px-4 py-3">
+                        Description
+                     </th>
+                     <th scope="col" class="px-4 py-3">
+                        Active
+                     </th>
+                     <th scope="col" class="px-4 py-3">
+                        Tenant Name
+                     </th>
+                     <th scope="col" class="px-2 py-3">
+                        Action
+                     </th>
+                  </tr>
+               </thead>
+               <tbody id="roomTableBody" class="px-6 py-3">
+                  <!-- Table rows will be dynamically added here -->
+               </tbody>
+            </table>
+         </div>
+
+
+
+
+
+      </div>
+   </div>
+
+   <!--Modal-->
+
+
+
+
+   <!-- Assign modal -->
+   <div id="assign-modal" tabindex="-1" aria-hidden="true"
+      class="hidden overflow-y-auto overflow-x-hidden fixed top-0 right-0 left-0 z-50 justify-center items-center w-full md:inset-0 h-[calc(100%-1rem)] max-h-full">
+      <div class="relative p-4 w-full max-w-2xl max-h-full">
+         <!-- Modal content -->
+         <div class="relative bg-white rounded-lg shadow dark:bg-gray-700">
+            <!-- Modal header -->
+            <div class="flex items-center justify-between p-4 md:p-5 border-b rounded-t dark:border-gray-600">
+               <h3 class="text-xl font-semibold text-gray-900 dark:text-white">
+                  Assign Tenant
+               </h3>
+               <button type="button"
+                  class="text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm w-8 h-8 ms-auto inline-flex justify-center items-center dark:hover:bg-gray-600 dark:hover:text-white"
+                  data-modal-hide="assign-modal">
+                  <svg class="w-3 h-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none"
+                     viewBox="0 0 14 14">
+                     <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="m1 1 6 6m0 0 6 6M7 7l6-6M7 7l-6 6" />
+                  </svg>
+                  <span class="sr-only">Close modal</span>
+               </button>
+            </div>
+            <!-- Modal body -->
+            <div class="p-4 md:p-5 space-y-4">
+               <p class="text-base leading-relaxed text-gray-500 dark:text-gray-400">
+                  Give this QR-Code to Tenant to continue
+               </p>
+               <p class="text-base leading-relaxed text-gray-500 dark:text-gray-400">
+                  The European Union’s General Data Protection Regulation (G.D.P.R.) goes into effect on May 25 and is
+                  meant to ensure a common set of data rights in the European Union. It requires organizations to notify
+                  users as soon as possible of high-risk data breaches that could personally affect them.
+               </p>
+            </div>
+         </div>
+      </div>
+   </div>
+
+   <!-- Addroom modal -->
+   <div id="crud-modal" tabindex="-1" aria-hidden="true"
+      class="hidden overflow-y-auto overflow-x-hidden fixed top-0 right-0 left-0 z-50 justify-center items-center w-full md:inset-0 h-[calc(100%-1rem)] max-h-full">
+      <div class="relative p-4 w-full max-w-md max-h-full">
+         <!-- Modal content -->
+         <div class="relative bg-white rounded-lg shadow dark:bg-gray-700">
+            <!-- Modal header -->
+            <div class="flex items-center justify-between p-4 md:p-5 border-b rounded-t dark:border-gray-600">
+               <h3 class="text-lg font-semibold text-gray-900 dark:text-white">
+                  Create New Room
+               </h3>
+               <button type="button"
+                  class="text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm w-8 h-8 ms-auto inline-flex justify-center items-center dark:hover:bg-gray-600 dark:hover:text-white"
+                  data-modal-toggle="crud-modal">
+                  <svg class="w-3 h-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none"
+                     viewBox="0 0 14 14">
+                     <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="m1 1 6 6m0 0 6 6M7 7l6-6M7 7l-6 6" />
+                  </svg>
+                  <span class="sr-only">Close modal</span>
+               </button>
+            </div>
+            <!-- Modal body -->
+            <form class="p-4 md:p-5" id="addRoomForm">
+               <div class="grid gap-4 mb-4 grid-cols-2">
+                  <div class="col-span-2">
+                     <label for="name" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Name</label>
+                     <input type="text" name="name" id="name"
+                        class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
+                        placeholder="Room Name" required="">
+                  </div>
+                  <div class="col-span-2">
+                     <label for="description"
+                        class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Description</label>
+                     <input type="text" name="name" id="description"
+                        class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
+                        placeholder="Room Description" required="">
+                  </div>
+                  <div class="col-span-2">
+                     <label for="status"
+                        class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Status</label>
+                     <select id="status" name="status"
+                        class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500">
+                        <option value="yes">Active</option>
+                        <option value="no">Disabled</option>
+                     </select>
+                  </div>
+               </div>
+               <button type="submit"
+                  class="text-white inline-flex items-center bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">
+                  <svg class="me-1 -ms-1 w-5 h-5" fill="currentColor" viewBox="0 0 20 20"
+                     xmlns="http://www.w3.org/2000/svg">
+                     <path fill-rule="evenodd"
+                        d="M10 5a1 1 0 011 1v3h3a1 1 0 110 2h-3v3a1 1 0 11-2 0v-3H6a1 1 0 110-2h3V6a1 1 0 011-1z"
+                        clip-rule="evenodd"></path>
+                  </svg>
+                  Add new Room
+               </button>
+            </form>
+         </div>
+      </div>
+   </div>
+   <!-- Dropdown menu -->
+
+
+
+
+
+   <script>
+      // script.js
+
+      // script.js
+
+
+      // Function to fetch room data and populate the table
+      async function fetchRoomData() {
+         const orgCode = sessionStorage.getItem('org_code'); // Get org_code from session storage
+
+         // Check if orgCode is not null or undefined before making the fetch request
+         if (orgCode) {
+            try {
+               const response = await fetch(`/api/room/${orgCode}`); // Include org_code in the URL
+               const rooms = await response.json();
+
+               const tableBody = document.getElementById('roomTableBody');
+
+               // Clear existing table rows
+               tableBody.innerHTML = '';
+
+               // Iterate through the room data and create table rows
+               rooms.forEach(room => {
+                  const row = document.createElement('tr');
+                  row.classList.add('bg-white', 'border-t', 'dark:bg-gray-800', 'dark:border-gray-700', 'hover:bg-gray-50', 'dark:hover:bg-gray-600');
+                  row.innerHTML = `
+                    <td class="px-4 py-4">${room.name}</td>
+                    <td class="px-4 py-4">${room.description}</td>
+                    <td class="status-cell flex items-center px-4 py-4">${room.is_active}</td>
+                    <td class="tenant-cell px-4 py-4 ">${room.firstname + ' ' + room.lastname || ''}</td>
+                    <td class="px-0 py-2 flex justify-start">
+                     <button class="inline-block text-blue-500 px-2.5" type="button" data-room-id="${room.id}" data-action="remove-tenant">Remove Tenant</button>
+                        <button class="inline-block text-blue-500 px-2.5" type="button" data-room-id="${room.id}" data-action="disable-room">Disable Room</button>
+                        <button class="inline-block text-blue-500 px-2.5" type="button" data-room-id="${room.id}" data-action="enable-room">Enable Room</button>
+                        <button class="inline-block text-red-500 px-2.5" type="button" data-room-id="${room.id}" data-action="delete-room">Delete</button>
+
+                     </td>
+                `;
+                  tableBody.appendChild(row);
+
+                  const statusCell = row.querySelector('.status-cell');
+                  if (room.is_active === 'yes') {
+                     const indicator = document.createElement('div');
+                     indicator.classList.add('h-2.5', 'w-2.5', 'rounded-full', 'bg-green-500', 'me-2');
+                     statusCell.innerHTML = ''; // Clear the cell content
+                     statusCell.appendChild(indicator);
+                     statusCell.innerHTML += 'Active'; // Add text after the indicator
+                  } else {
+                     statusCell.textContent = 'Disable'; // Display "Offline" if not active
+                  }
+                  const tenantCell = row.querySelector('.tenant-cell');
+                  if (!room.tenant_id) {
+                     const assignBtn = document.createElement('button');
+                     assignBtn.textContent = 'Assign Tenant';
+                     assignBtn.setAttribute('data-modal-target', 'assign-modal');
+                     assignBtn.setAttribute('data-modal-toggle', 'assign-modal');
+                     assignBtn.classList.add('text-blue-500', 'rounded');
+                     assignBtn.addEventListener('click', () => {
+                        // Implement assign tenant functionality here
+                        console.log('Assign tenant clicked for room:', room.id);
+                     });
+                     tenantCell.innerHTML = ''; // Clear cell content
+                     tenantCell.appendChild(assignBtn);
+                  }
+               });
+               // Attach event listeners to the buttons after rows are appended
+               document.querySelectorAll('button[data-action="remove-tenant"]').forEach(button => {
+                  button.addEventListener('click', async () => {
+                     const roomId = button.getAttribute('data-room-id');
+                     await fetch(`/api/room/${orgCode}/${roomId}/tenant`, {
+                        method: 'DELETE',
+                        headers: { 'Content-Type': 'application/json' }
+                     });
+                     fetchRoomData(); // Refresh room data
+                  });
+               });
+
+               document.querySelectorAll('button[data-action="disable-room"]').forEach(button => {
+                  button.addEventListener('click', async () => {
+                     const roomId = button.getAttribute('data-room-id');
+                     await fetch(`/api/room/${orgCode}/${roomId}/disable`, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' }
+                     });
+                     fetchRoomData(); // Refresh room data
+                  });
+               });
+
+               document.querySelectorAll('button[data-action="enable-room"]').forEach(button => {
+                  button.addEventListener('click', async () => {
+                     const roomId = button.getAttribute('data-room-id');
+                     await fetch(`/api/room/${orgCode}/${roomId}/enable`, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' }
+                     });
+                     fetchRoomData(); // Refresh room data
+                  });
+               });
+
+               document.querySelectorAll('button[data-action="delete-room"]').forEach(button => {
+                  button.addEventListener('click', async () => {
+                     const roomId = button.getAttribute('data-room-id');
+                     await fetch(`/api/room/${orgCode}/${roomId}`, {
+                        method: 'DELETE',
+                        headers: { 'Content-Type': 'application/json' }
+                     });
+                     fetchRoomData(); // Refresh room data
+                  });
+               });
+            } catch (error) {
+               console.error('Error fetching room data:', error);
+            }
+         } else {
+            console.error('Organization code not found in session storage.');
+         }
+      }
+
+      document.getElementById('addRoomForm').addEventListener('submit', async (event) => {
+         event.preventDefault(); // Prevent the default form submission
+         const orgCode = sessionStorage.getItem('org_code');
+         const name = document.getElementById('name').value;
+         const description = document.getElementById('description').value;
+         const status = document.getElementById('status').value;
+         const formData = {
+            "org_code": orgCode,
+            "name": name,
+            "description": description,
+            "is_active": status
+         };
+
+         try {
+            const response = await fetch('/api/room', {
+               method: 'POST',
+               headers: {
+                  'Content-Type': 'application/json'
+               },
+               body: JSON.stringify(formData)
+            });
+
+            if (response.ok) {
+               alert('Room added successfully!');
+               window.location.reload();
+            } else {
+               throw new Error('Failed to add room.');
+            }
+         } catch (error) {
+            console.error('Error adding room:', error);
+            alert('An error occurred while adding the room. Please try again later.');
+         }
+      });
+
+
+      // Call fetchRoomData when the page loads
+      document.addEventListener('DOMContentLoaded', fetchRoomData);
+
+
+
+
+   </script>
+   <script src="https://cdnjs.cloudflare.com/ajax/libs/flowbite/2.3.0/flowbite.min.js"></script>
+</body>
+
+
+</html>

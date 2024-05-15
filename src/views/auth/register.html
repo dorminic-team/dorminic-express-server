@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User Registration</title>
+    <!-- Include Tailwind CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+</head>
+
+<body class="bg-gray-200 flex justify-center items-center h-screen">
+    <div class="bg-white p-8 rounded-lg shadow-md max-w-md w-full">
+        <h1 class="text-2xl font-bold mb-4">Register</h1>
+        <form id="registerForm" class="space-y-4">
+            <div>
+                <label for="firstname" class="block">First Name</label>
+                <input type="text" id="firstname" name="firstname" class="w-full border rounded-md px-4 py-2 mt-1 focus:outline-none focus:ring focus:border-blue-300" required>
+            </div>
+            <div>
+                <label for="lastname" class="block">Last Name</label>
+                <input type="text" id="lastname" name="lastname" class="w-full border rounded-md px-4 py-2 mt-1 focus:outline-none focus:ring focus:border-blue-300" required>
+            </div>
+            <div>
+                <label for="username" class="block">Username</label>
+                <input type="text" id="username" name="username" class="w-full border rounded-md px-4 py-2 mt-1 focus:outline-none focus:ring focus:border-blue-300" required>
+            </div>
+            <div>
+                <label for="email" class="block">Email</label>
+                <input type="email" id="email" name="email" class="w-full border rounded-md px-4 py-2 mt-1 focus:outline-none focus:ring focus:border-blue-300" required>
+            </div>
+            <div>
+                <label for="password" class="block">Password</label>
+                <input type="password" id="password" name="password" class="w-full border rounded-md px-4 py-2 mt-1 focus:outline-none focus:ring focus:border-blue-300" required>
+            </div>
+            <div>
+                <button type="submit"
+                    class="w-full bg-blue-500 text-white py-2 rounded-md hover:bg-blue-600">Register</button>
+            </div>
+            <!-- Alert component -->
+            <div id="alertMessage"
+                class="hidden mt-4 px-4 py-2 rounded-md bg-red-100 text-red-700 border border-red-400">
+                <!-- Placeholder for alert message -->
+            </div>
+        </form>
+        <a href="/login" class="block text-center mt-4 text-blue-500 hover:underline">Back to Login</a>
+    </div>
+    <script>
+        const registerForm = document.getElementById('registerForm');
+    
+        registerForm.addEventListener('submit', async (e) => {
+            e.preventDefault(); // Prevent the default form submission
+    
+            const formData = new FormData(registerForm);
+            const requestData = Object.fromEntries(formData.entries());
+    
+            try {
+                const response = await fetch('/api/register', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(requestData)
+                });
+
+                if (response.ok) {
+                    window.location.href = '/';
+                } else {
+                    throw new Error('Network response was not ok.');
+                }
+            } catch (error) {
+                console.error('Error during registration:', error);
+                // Show an alert with the error message
+                alert('Error during registration. Please try again later.');
+            }
+        });
+    </script>
+    
+</body>
+
+</html>

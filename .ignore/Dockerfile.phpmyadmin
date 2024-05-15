@@ -1,0 +1,6 @@
+# Use the official phpMyAdmin image as the base image
+FROM phpmyadmin/phpmyadmin:latest
+
+# Set environment variables for phpMyAdmin
+ENV PMA_HOST=db
+ENV MYSQL_ROOT_PASSWORD=root_password
