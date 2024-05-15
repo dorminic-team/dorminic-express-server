@@ -11,7 +11,7 @@ const { router: usermanagementRouter } = require('./features/usermanagement');
 const { router: roomRouter } = require('./features/room');
 const { router: mailRouter } = require('./features/mail');
 router.use('/bills', billsRouter);
-router.use('/announcements', announcementsRouter);
+router.use('/announcement', announcementsRouter);
 router.use('/maintenance', maintenanceRouter);
 router.use('/organization', usermanagementRouter);
 router.use('/room', roomRouter);

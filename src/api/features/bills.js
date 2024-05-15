@@ -4,12 +4,12 @@ const mysql = require('mysql2/promise');
 const pool = require('../../config/pool');
 // CREATE bill
 router.post('/', async (req, res) => {
-    const { org_code, title, description, cost, is_paid, informant_id, customer_id } = req.body;
+    const { org_code, title, description, cost, is_paid, informant_id, customer_id, room_id } = req.body;
 
     try {
         const billTableName = `${org_code}_bill`;
-        const query = `INSERT INTO ${billTableName} (title, description, cost, is_paid, informant_id, customer_id) VALUES (?, ?, ?, ?, ?, ?)`;
-        await pool.promise().query(query, [title, description, cost, is_paid, informant_id, customer_id]);
+        const query = `INSERT INTO ${billTableName} (title, description, cost, is_paid, informant_id, customer_id, room_id) VALUES (?, ?, ?, ?, ?, ?, ?)`;
+        await pool.promise().query(query, [title, description, cost, is_paid, informant_id, customer_id, room_id]);
 
         return res.status(200).json({ message: 'Bill created successfully' });
     } catch (err) {
@@ -19,9 +19,9 @@ router.post('/', async (req, res) => {
 });
 
 // READ all bills by org_code
-router.get('/', async (req, res) => {
+router.get('/:org_code', async (req, res) => {
     try {
-        const { org_code } = req.body;
+        const { org_code } = req.params;
         const billTableName = `${org_code}_bill`;
         const query = `SELECT * FROM ${billTableName}`;
         const [results] = await pool.promise().query(query);
@@ -29,6 +29,23 @@ router.get('/', async (req, res) => {
         return res.status(200).json(results);
     } catch (err) {
         console.error('Error retrieving bills by org_code:', err);
+        return res.status(500).json({ error: 'Database error' });
+    }
+});
+
+
+router.get('/customer_id/:customer_id', async (req, res) => {
+    const { org_code } = req.query;
+    const { customer_id } = req.params;
+
+    try {
+        const billTableName = `${org_code}_bill`;
+        const query = `SELECT * FROM ${billTableName} WHERE customer_id = ?`;
+        const [results] = await pool.query(query, [customer_id]);
+
+        return res.status(200).json(results);
+    } catch (err) {
+        console.error('Error retrieving bills by customer_id:', err);
         return res.status(500).json({ error: 'Database error' });
     }
 });

@@ -242,7 +242,8 @@
             <form class="p-4 md:p-5" id="addRoomForm">
                <div class="grid gap-4 mb-4 grid-cols-2">
                   <div class="col-span-2">
-                     <label for="title" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Bill Name</label>
+                     <label for="title" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Bill
+                        Name</label>
                      <input type="text" name="title" id="title"
                         class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
                         placeholder="Title" required="">
@@ -255,14 +256,13 @@
                         placeholder="Bill Description" required="">
                   </div>
                   <div class="col-span-2">
-                     <label for="cost"
-                        class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Cost</label>
+                     <label for="cost" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Cost</label>
                      <input type="number" name="cost" id="cost"
                         class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
                         placeholder="Cost" required="">
                   </div>
                </div>
-               <button type="submit"
+               <button type="submit" onclick="addbill()"
                   class="text-white inline-flex items-center bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">
                   <svg class="me-1 -ms-1 w-5 h-5" fill="currentColor" viewBox="0 0 20 20"
                      xmlns="http://www.w3.org/2000/svg">
@@ -280,9 +280,6 @@
 
 
    <script>
-      // script.js
-
-      // script.js
 
       // Function to fetch room data and populate the table
       async function fetchRoomData() {
@@ -309,7 +306,7 @@
                     <td class="px-6 py-4">${room.name}</td>
                     <td class="tenant-cell px-6 py-4 ">${room.firstname + ' ' + room.lastname || ''}</td>
                     <td class="px-6 py-4 flex justify-end">
-                     <button data-modal-target="Create-Bill-modal" data-modal-toggle="Create-Bill-modal" class="block text-white bg-green-700 hover:bg-green-800 focus:ring-4 focus:outline-none focus:ring-green-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-green-600 dark:hover:bg-green-700 dark:focus:ring-green-800" type="button">
+                     <button data-modal-target="Create-Bill-modal" data-modal-toggle="Create-Bill-modal"  data-tenant-id="${room.tenant_id}"  data-room-id="${room.id}" class="block text-white bg-green-700 hover:bg-green-800 focus:ring-4 focus:outline-none focus:ring-green-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-green-600 dark:hover:bg-green-700 dark:focus:ring-green-800" type="button">
   Create Bill
 </button>
    <button onclick="viewBill(${room.tenant_id})" class="btn-view-bill bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-3 rounded-lg ml-2">View Bill</button>
@@ -326,43 +323,57 @@
             console.error('Organization code not found in session storage.');
          }
       }
-      document.getElementById('addRoomForm').addEventListener('submit', async (event) => {
-         event.preventDefault(); // Prevent the default form submission
-         const orgCode = sessionStorage.getItem('org_code');
-         const name = document.getElementById('name').value;
-         const description = document.getElementById('description').value;
-         const status = document.getElementById('status').value;
-         const formData = {
-            "org_code": orgCode,
-            "name": name,
-            "description": description,
-            "is_active": status
-         };
 
-         try {
-            const response = await fetch('/api/room', {
-               method: 'POST',
-               headers: {
-                  'Content-Type': 'application/json'
-               },
-               body: JSON.stringify(formData)
-            });
-
-            if (response.ok) {
-               alert('Room added successfully!');
-               window.location.reload();
-            } else {
-               throw new Error('Failed to add room.');
-            }
-         } catch (error) {
-            console.error('Error adding room:', error);
-            alert('An error occurred while adding the room. Please try again later.');
-         }
-      });
 
       // Call fetchRoomData when the page loads
       document.addEventListener('DOMContentLoaded', fetchRoomData);
 
+      async function addbill() {
+         document.getElementById('addRoomForm').addEventListener('submit', async (event) => {
+            event.preventDefault(); // Prevent the default form submission
+            const orgCode = sessionStorage.getItem('org_code');
+            const title = document.getElementById('title').value;
+            const description = document.getElementById('description').value;
+            const cost = document.getElementById('cost').value;
+
+            const tenantIdButton = document.querySelector('[data-modal-target="Create-Bill-modal"]');
+            const tenantId = tenantIdButton.dataset.tenantId;
+
+            const roomIdButton = document.querySelector('[data-modal-target="Create-Bill-modal"]');
+            const roomId = roomIdButton.dataset.roomId;
+
+            const formData = {
+               "org_code": orgCode,
+               "title": title,
+               "description": description,
+               "cost": cost,
+               "is_paid": 'no', // Assuming is_paid should be false initially // Assuming these values need to be filled from somewhere else
+               "customer_id": tenantId,
+               "room_id": roomId// Use tenant_id as customer_id
+            };
+
+            try {
+               const response = await fetch('/api/bills', {
+                  method: 'POST',
+                  headers: {
+                     'Content-Type': 'application/json'
+                  },
+                  body: JSON.stringify(formData)
+               });
+
+               if (response.ok) {
+                  alert('Bill created successfully!');
+                  window.location.reload();
+               } else {
+                  throw new Error('Failed to create bill.');
+               }
+            } catch (error) {
+               console.error('Error creating bill:', error);
+               alert('An error occurred while creating the bill. Please try again later.');
+            }
+         });
+
+      }
 
 
 

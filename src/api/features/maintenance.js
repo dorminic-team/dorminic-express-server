@@ -18,8 +18,8 @@ router.post('/', async (req, res) => {
 });
 
 // Read all maintenance records
-router.get('/', async (req, res) => {
-    const { org_code } = req.body;
+router.get('/:org_code', async (req, res) => {
+    const { org_code } = req.params;
     try {
         const maintenanceTableName = `${org_code}_maintenance`;
         const query = `SELECT * FROM ${maintenanceTableName}`;

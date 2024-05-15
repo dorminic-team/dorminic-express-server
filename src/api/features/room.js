@@ -3,13 +3,14 @@ const router = express.Router();
 const mysql = require('mysql2/promise');
 const pool = require('../../config/pool');
 
+// Create a new room
 router.post('/', async (req, res) => {
     const { org_code, name, description, is_active, tenant_id } = req.body;
     const roomTableName = `${org_code}_room`;
     try {
         const createRoomQuery = `
-            INSERT INTO ${roomTableName} ( name, description, is_active, tenant_id)
-            VALUES ( ?, ?, ?, ?)
+            INSERT INTO ${roomTableName} (name, description, is_active, tenant_id)
+            VALUES (?, ?, ?, ?)
         `;
         const values = [name, description, is_active, tenant_id];
         await pool.promise().query(createRoomQuery, values);
@@ -20,8 +21,9 @@ router.post('/', async (req, res) => {
     }
 });
 
+// Get all rooms for a specific organization
 router.get('/:org_code', async (req, res) => {
-    const org_code = req.params.org_code; // Use req.params to get org_code from route parameter
+    const org_code = req.params.org_code;
     const roomTableName = `${org_code}_room`;
     
     try {
@@ -38,9 +40,9 @@ router.get('/:org_code', async (req, res) => {
     }
 });
 
-
-router.get('/:id', async (req, res) => {
-    const org_code = req.body.org_code;
+// Get a specific room by ID
+router.get('/:org_code/:id', async (req, res) => {
+    const org_code = req.params.org_code;
     const roomId = req.params.id;
     const roomTableName = `${org_code}_room`;
     try {
@@ -60,8 +62,9 @@ router.get('/:id', async (req, res) => {
     }
 });
 
-router.put('/:id', async (req, res) => {
-    const org_code = req.body.org_code;
+// Update a specific room by ID
+router.put('/:org_code/:id', async (req, res) => {
+    const org_code = req.params.org_code;
     const roomId = req.params.id;
     const { name, description, is_active, tenant_id } = req.body;
     const roomTableName = `${org_code}_room`;
@@ -80,8 +83,9 @@ router.put('/:id', async (req, res) => {
     }
 });
 
-router.delete('/:id', async (req, res) => {
-    const org_code = req.body.org_code;
+// Delete a specific room by ID
+router.delete('/:org_code/:id', async (req, res) => {
+    const org_code = req.params.org_code;
     const roomId = req.params.id;
     const roomTableName = `${org_code}_room`;
     try {
@@ -89,7 +93,7 @@ router.delete('/:id', async (req, res) => {
             DELETE FROM ${roomTableName}
             WHERE id = ?
         `;
-        await pool.query(deleteRoomQuery, [roomId]);
+        await pool.promise().query(deleteRoomQuery, [roomId]);
         res.send('Room deleted successfully');
     } catch (error) {
         console.error(error);
@@ -97,6 +101,63 @@ router.delete('/:id', async (req, res) => {
     }
 });
 
+// Remove tenant from a specific room
+router.delete('/:org_code/:id/tenant', async (req, res) => {
+    const org_code = req.params.org_code;
+    const roomId = req.params.id;
+    const roomTableName = `${org_code}_room`;
+    try {
+        const removeTenantQuery = `
+            UPDATE ${roomTableName}
+            SET tenant_id = NULL
+            WHERE id = ?
+        `;
+        await pool.promise().query(removeTenantQuery, [roomId]);
+        res.send('Tenant removed successfully');
+    } catch (error) {
+        console.error(error);
+        res.status(500).send('Error removing tenant');
+    }
+});
+
+// Disable a specific room
+router.post('/:org_code/:id/disable', async (req, res) => {
+    const org_code = req.params.org_code;
+    const roomId = req.params.id;
+    const roomTableName = `${org_code}_room`;
+    try {
+        const disableRoomQuery = `
+            UPDATE ${roomTableName}
+            SET is_active = 'no'
+            WHERE id = ?
+        `;
+        await pool.promise().query(disableRoomQuery, [roomId]);
+        res.send('Room disabled successfully');
+    } catch (error) {
+        console.error(error);
+        res.status(500).send('Error disabling room');
+    }
+});
+
+router.post('/:org_code/:id/enable', async (req, res) => {
+    const org_code = req.params.org_code;
+    const roomId = req.params.id;
+    const roomTableName = `${org_code}_room`;
+    try {
+        const disableRoomQuery = `
+            UPDATE ${roomTableName}
+            SET is_active = 'yes'
+            WHERE id = ?
+        `;
+        await pool.promise().query(disableRoomQuery, [roomId]);
+        res.send('Room disabled successfully');
+    } catch (error) {
+        console.error(error);
+        res.status(500).send('Error disabling room');
+    }
+});
+
+// Assign tenant to a room
 router.post('/assignTenant', async (req, res) => {
     const org_code = req.body.org_code;
     const roomId = req.body.roomId;
@@ -117,7 +178,4 @@ router.post('/assignTenant', async (req, res) => {
     }
 });
 
-
-
-
-module.exports = { router };
+module.exports = {router};

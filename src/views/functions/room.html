@@ -205,17 +205,20 @@
             <table id="roomTable" class="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
                <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
                   <tr>
-                     <th scope="col" class="px-6 py-3">
+                     <th scope="col" class="px-4 py-3">
                         Room
                      </th>
-                     <th scope="col" class="px-6 py-3">
+                     <th scope="col" class="px-4 py-3">
                         Description
                      </th>
-                     <th scope="col" class="px-6 py-3">
+                     <th scope="col" class="px-4 py-3">
                         Active
                      </th>
-                     <th scope="col" class="px-6 py-3">
+                     <th scope="col" class="px-4 py-3">
                         Tenant Name
+                     </th>
+                     <th scope="col" class="px-2 py-3">
+                        Action
                      </th>
                   </tr>
                </thead>
@@ -313,13 +316,14 @@
                         placeholder="Room Description" required="">
                   </div>
                   <div class="col-span-2">
-                     <label for="status" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Status</label>
+                     <label for="status"
+                        class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Status</label>
                      <select id="status" name="status"
-                         class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500">
-                         <option value="yes">Active</option>
-                         <option value="no">Disabled</option>
+                        class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500">
+                        <option value="yes">Active</option>
+                        <option value="no">Disabled</option>
                      </select>
-                 </div>
+                  </div>
                </div>
                <button type="submit"
                   class="text-white inline-flex items-center bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">
@@ -335,6 +339,9 @@
          </div>
       </div>
    </div>
+   <!-- Dropdown menu -->
+
+
 
 
 
@@ -342,6 +349,7 @@
       // script.js
 
       // script.js
+
 
       // Function to fetch room data and populate the table
       async function fetchRoomData() {
@@ -363,12 +371,20 @@
                   const row = document.createElement('tr');
                   row.classList.add('bg-white', 'border-t', 'dark:bg-gray-800', 'dark:border-gray-700', 'hover:bg-gray-50', 'dark:hover:bg-gray-600');
                   row.innerHTML = `
-                    <td class="px-6 py-4">${room.name}</td>
-                    <td class="px-6 py-4">${room.description}</td>
-                    <td class="status-cell flex items-center px-6 py-4">${room.is_active}</td>
-                    <td class="tenant-cell px-6 py-4 ">${room.firstname + ' ' + room.lastname || ''}</td>
+                    <td class="px-4 py-4">${room.name}</td>
+                    <td class="px-4 py-4">${room.description}</td>
+                    <td class="status-cell flex items-center px-4 py-4">${room.is_active}</td>
+                    <td class="tenant-cell px-4 py-4 ">${room.firstname + ' ' + room.lastname || ''}</td>
+                    <td class="px-0 py-2 flex justify-start">
+                     <button class="inline-block text-blue-500 px-2.5" type="button" data-room-id="${room.id}" data-action="remove-tenant">Remove Tenant</button>
+                        <button class="inline-block text-blue-500 px-2.5" type="button" data-room-id="${room.id}" data-action="disable-room">Disable Room</button>
+                        <button class="inline-block text-blue-500 px-2.5" type="button" data-room-id="${room.id}" data-action="enable-room">Enable Room</button>
+                        <button class="inline-block text-red-500 px-2.5" type="button" data-room-id="${room.id}" data-action="delete-room">Delete</button>
+
+                     </td>
                 `;
                   tableBody.appendChild(row);
+
                   const statusCell = row.querySelector('.status-cell');
                   if (room.is_active === 'yes') {
                      const indicator = document.createElement('div');
@@ -393,6 +409,50 @@
                      tenantCell.innerHTML = ''; // Clear cell content
                      tenantCell.appendChild(assignBtn);
                   }
+               });
+               // Attach event listeners to the buttons after rows are appended
+               document.querySelectorAll('button[data-action="remove-tenant"]').forEach(button => {
+                  button.addEventListener('click', async () => {
+                     const roomId = button.getAttribute('data-room-id');
+                     await fetch(`/api/room/${orgCode}/${roomId}/tenant`, {
+                        method: 'DELETE',
+                        headers: { 'Content-Type': 'application/json' }
+                     });
+                     fetchRoomData(); // Refresh room data
+                  });
+               });
+
+               document.querySelectorAll('button[data-action="disable-room"]').forEach(button => {
+                  button.addEventListener('click', async () => {
+                     const roomId = button.getAttribute('data-room-id');
+                     await fetch(`/api/room/${orgCode}/${roomId}/disable`, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' }
+                     });
+                     fetchRoomData(); // Refresh room data
+                  });
+               });
+
+               document.querySelectorAll('button[data-action="enable-room"]').forEach(button => {
+                  button.addEventListener('click', async () => {
+                     const roomId = button.getAttribute('data-room-id');
+                     await fetch(`/api/room/${orgCode}/${roomId}/enable`, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' }
+                     });
+                     fetchRoomData(); // Refresh room data
+                  });
+               });
+
+               document.querySelectorAll('button[data-action="delete-room"]').forEach(button => {
+                  button.addEventListener('click', async () => {
+                     const roomId = button.getAttribute('data-room-id');
+                     await fetch(`/api/room/${orgCode}/${roomId}`, {
+                        method: 'DELETE',
+                        headers: { 'Content-Type': 'application/json' }
+                     });
+                     fetchRoomData(); // Refresh room data
+                  });
                });
             } catch (error) {
                console.error('Error fetching room data:', error);
@@ -435,6 +495,7 @@
             alert('An error occurred while adding the room. Please try again later.');
          }
       });
+
 
       // Call fetchRoomData when the page loads
       document.addEventListener('DOMContentLoaded', fetchRoomData);

@@ -1,12 +1,11 @@
 const express = require('express');
 const router = express.Router();
-const mysql = require('mysql2/promise');
 const pool = require('../../config/pool');
 
 // READ all announcements by org_code
-router.get('/', async (req, res) => {
+router.get('/:org_code', async (req, res) => {
     try {
-        const { org_code } = req.body;
+        const org_code = req.params.org_code;
         const announcementTableName = `${org_code}_announcement`;
         const query = `SELECT * FROM ${announcementTableName}`;
         const [results] = await pool.promise().query(query);
@@ -18,37 +17,48 @@ router.get('/', async (req, res) => {
     }
 });
 
-// UPDATE announcement
-router.put('/:announcement_id', async (req, res) => {
-    const { org_code } = req.body;
-    const announcement_id = req.params.announcement_id;
-    const { title, description, cost, is_paid, informant_id } = req.body;
+// CREATE new announcement
+router.post('/', async (req, res) => {
+    const { title, description, is_expired, informant_id } = req.body;
 
     try {
-        const billTableName = `${org_code}_bill`;
-        const query = `UPDATE ${billTableName} SET title = ?, description = ?, cost = ?, is_paid = ?, informant_id = ? WHERE id = ?`;
-        await pool.promise().query(query, [title, description, cost, is_paid, informant_id, bill_id]);
+        const query = `INSERT INTO announcements (title, description, is_expired, informant_id) VALUES (?, ?, ?, ?)`;
+        await pool.query(query, [title, description, is_expired, informant_id]);
 
-        return res.status(200).json({ message: 'Bill updated successfully' });
+        return res.status(201).json({ message: 'Announcement created successfully' });
     } catch (err) {
-        console.error('Error updating bill:', err);
+        console.error('Error creating announcement:', err);
         return res.status(500).json({ error: 'Database error' });
     }
 });
 
-// DELETE bill
-router.delete('/:bill_id', async (req, res) => {
-    const { org_code } = req.body;
-    const bill_id = req.params.bill_id;
+// UPDATE announcement
+router.put('/:announcement_id', async (req, res) => {
+    const { title, description, is_expired } = req.body;
+    const announcement_id = req.params.announcement_id;
 
     try {
-        const billTableName = `${org_code}_bill`;
-        const query = `DELETE FROM ${billTableName} WHERE id = ?`;
-        await pool.promise().query(query, [bill_id]);
+        const query = `UPDATE announcements SET title = ?, description = ?, is_expired = ? WHERE id = ?`;
+        await pool.query(query, [title, description, is_expired, announcement_id]);
 
-        return res.status(200).json({ message: 'Bill deleted successfully' });
+        return res.status(200).json({ message: 'Announcement updated successfully' });
     } catch (err) {
-        console.error('Error deleting bill:', err);
+        console.error('Error updating announcement:', err);
+        return res.status(500).json({ error: 'Database error' });
+    }
+});
+
+// DELETE announcement
+router.delete('/:announcement_id', async (req, res) => {
+    const announcement_id = req.params.announcement_id;
+
+    try {
+        const query = `DELETE FROM announcements WHERE id = ?`;
+        await pool.query(query, [announcement_id]);
+
+        return res.status(200).json({ message: 'Announcement deleted successfully' });
+    } catch (err) {
+        console.error('Error deleting announcement:', err);
         return res.status(500).json({ error: 'Database error' });
     }
 });

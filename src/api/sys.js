@@ -6,6 +6,13 @@ const pool = require('../config/pool');
 
 // FUNCTION
 async function createOrganizationTables(org_code) {
+    const tableName = `${org_code}`;
+    const createTableQuery =  `CREATE TABLE ${tableName} (
+        s-key VARCHAR(255) NOT NULL,
+        s-value VARCHAR(255) NOT NULL,
+    )`;
+    await pool.promise().query(createTableQuery);
+
     const roomTableName = `${org_code}_room`;
     const createRoomTableQuery = `CREATE TABLE ${roomTableName} (
         id INT PRIMARY KEY AUTO_INCREMENT,

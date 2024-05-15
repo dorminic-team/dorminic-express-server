@@ -17,7 +17,7 @@ const pool = require('./src/config/pool');
 app.use(bodyParser.json());
 app.use(setupSessionMiddleware());
 //frontend routes
-app.use('/', authRoutes);
+app.use('/' ,authRoutes);
 //backend router
 app.use('/api', authRouter);
 app.use('/api', sysRouter);
@@ -35,7 +35,7 @@ app.get('/test', async (req, res) => {
     res.status(500).json({ message: 'Error connecting to database' });
   }
 });
-app.use('/', viewsRoutes);
+app.use('/', requireLogin ,viewsRoutes);
 app.use(express.static(path.join(__dirname, 'src', 'views')));
 
 // Start the server
