@@ -1,0 +1,10 @@
+version: '3.8'
+
+services:
+  phpmyadmin:
+    image: arm64v8/phpmyadmin
+    environment:
+      PMA_HOST: 34.87.162.93
+      MYSQL_ROOT_PASSWORD: '{TcVK9Fc]F4+8pVX'  # Use your MySQL root password
+    ports:
+      - "8080:80"

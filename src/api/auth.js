@@ -128,17 +128,44 @@ router.post('/login', async (req, res) => {
     // Generate access and refresh tokens
     const accessToken = generateAccessToken(user.id);
     const refreshToken = generateRefreshToken(user.id);
-    const org_code = user.org_code;
+    // Fetch organization details based on org_code
+    const [orgRows] = await pool.promise().query('SELECT name, description, street_address, city, state_province, postal_code, country, phone FROM _Organization WHERE org_code = ?', [user.org_code]);
+    const org = orgRows[0];
 
-    // Store tokens in session or response headers as needed
+    if (!org) {
+      return res.status(404).json({ error: 'Organization not found' });
+    }
+
+    // Assign organization details to variables
+    const { name: org_name, description: org_description, street_address: org_street_address, city: org_city, state_province: org_state_province, postal_code: org_postal_code, country: org_country, phone: org_phone } = org;
+    const { firstname: firstname, lastname: lastname, username: username, email: email, id: userId } = user;
+
+    // Store tokens and organization details in session or response headers as needed
     req.session.accessToken = accessToken;
     req.session.refreshToken = refreshToken;
-    req.session.org_code = org_code;
+    req.session.org_code = user.org_code;
 
-    // Send tokens in the response
-    return res.status(200).json({ accessToken, refreshToken, org_code });
+    // Send tokens and organization details in the response
+    return res.status(200).json({
+      accessToken,
+      refreshToken,
+      org_code: user.org_code,
+      org_name,
+      org_description,
+      org_street_address,
+      org_city,
+      org_state_province,
+      org_postal_code,
+      org_country,
+      org_phone,
+      userId,
+      firstname,
+      lastname,
+      username,
+      email
+    });
+
   } catch (err) {
-    console.error('Error in user login:', err);
     return res.status(500).json({ error: 'Server error' });
   }
 });
@@ -156,34 +183,34 @@ const generateResetToken = () => {
 router.post('/reset-email', async (req, res) => {
   const { email } = req.body;
   try {
-      // Check if the user exists in your database
-      const [rows] = await pool.promise().query('SELECT * FROM _User WHERE email = ?', [email]);
-      const user = rows[0];
-      if (!user) {
-          return res.status(404).json({ error: 'User not found' });
-      }
-      const token = generateResetToken();
-      const expiryDate = new Date(Date.now() + 24 * 60 * 60 * 1000); // Token expires in 24 hours
-      const query = 'INSERT INTO _User_reset_tokens (user_id, token, expiry_date) VALUES (?, ?, ?)';
-      await pool.promise().query(query, [user.id, token, expiryDate]);
-      const mailOptions = {
-          from: process.env.GMAIL_USER,
-          to: user.email,
-          subject: 'Reset Your Password',
-          text: `You requested to reset your password. Click the link below to reset your password:
+    // Check if the user exists in your database
+    const [rows] = await pool.promise().query('SELECT * FROM _User WHERE email = ?', [email]);
+    const user = rows[0];
+    if (!user) {
+      return res.status(404).json({ error: 'User not found' });
+    }
+    const token = generateResetToken();
+    const expiryDate = new Date(Date.now() + 24 * 60 * 60 * 1000); // Token expires in 24 hours
+    const query = 'INSERT INTO _User_reset_tokens (user_id, token, expiry_date) VALUES (?, ?, ?)';
+    await pool.promise().query(query, [user.id, token, expiryDate]);
+    const mailOptions = {
+      from: process.env.GMAIL_USER,
+      to: user.email,
+      subject: 'Reset Your Password',
+      text: `You requested to reset your password. Click the link below to reset your password:
           ${process.env.BASE_URL}/reset-password/${token}`,
-      };
-      transporter.sendMail(mailOptions, (error, info) => {
-          if (error) {
-              console.error('Error sending reset password email:', error);
-              return res.status(500).json({ error: 'Error sending reset password email' });
-          }
-          console.log('Reset password email sent:', info.response);
-          res.status(200).json({ message: 'Password reset email sent' });
-      });
+    };
+    transporter.sendMail(mailOptions, (error, info) => {
+      if (error) {
+        console.error('Error sending reset password email:', error);
+        return res.status(500).json({ error: 'Error sending reset password email' });
+      }
+      console.log('Reset password email sent:', info.response);
+      res.status(200).json({ message: 'Password reset email sent' });
+    });
   } catch (error) {
-      console.error('Error requesting password reset:', error);
-      res.status(500).json({ error: 'Internal server error' });
+    console.error('Error requesting password reset:', error);
+    res.status(500).json({ error: 'Internal server error' });
   }
 });
 

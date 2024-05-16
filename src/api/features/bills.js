@@ -41,7 +41,7 @@ router.get('/customer_id/:customer_id', async (req, res) => {
     try {
         const billTableName = `${org_code}_bill`;
         const query = `SELECT * FROM ${billTableName} WHERE customer_id = ?`;
-        const [results] = await pool.query(query, [customer_id]);
+        const [results] = await pool.promise().query(query, [customer_id]);
 
         return res.status(200).json(results);
     } catch (err) {
