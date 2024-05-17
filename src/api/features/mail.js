@@ -43,6 +43,27 @@ router.get('/:id', async (req, res) => {
     }
 });
 
+router.get('/:org_code/:userId/findByNotExpired', async (req, res) => {
+    try {
+        const org_code = req.params.org_code;
+        const userId = req.params.userId;
+
+        const roomTableName = `${org_code}_room`;
+        const roomquery = `SELECT * FROM ${roomTableName} WHERE tenant_id = '${userId}'`
+        const [roomresults] = await pool.promise().query(roomquery);
+        const roomIds = roomresults.map((room) => room.id);
+
+        const announcementTableName = `${org_code}_mail`;
+        const query = `SELECT * FROM ${announcementTableName} WHERE room_id = '${roomIds}' AND is_received != 'yes'`;
+        const [results] = await pool.promise().query(query);
+
+        return res.status(200).json(results);
+    } catch (err) {
+        console.error('Error retrieving announcements by org_code:', err);
+        return res.status(500).json({ error: 'Database error' });
+    }
+});
+
 // Update a mail (PUT /mail/:id)
 router.put('/:id', async (req, res) => {
     const { org_code } = req.body;

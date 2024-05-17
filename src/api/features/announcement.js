@@ -16,6 +16,20 @@ router.get('/:org_code', async (req, res) => {
         return res.status(500).json({ error: 'Database error' });
     }
 });
+// READ all announcements by org_code
+router.get('/:org_code/findByNotExpired', async (req, res) => {
+    try {
+        const org_code = req.params.org_code;
+        const announcementTableName = `${org_code}_announcement`;
+        const query = `SELECT * FROM ${announcementTableName} WHERE is_expired != 'yes'`;
+        const [results] = await pool.promise().query(query);
+
+        return res.status(200).json(results);
+    } catch (err) {
+        console.error('Error retrieving announcements by org_code:', err);
+        return res.status(500).json({ error: 'Database error' });
+    }
+});
 
 // CREATE new announcement
 router.post('/', async (req, res) => {

@@ -15,5 +15,5 @@ router.use('/announcement', announcementsRouter);
 router.use('/maintenance', maintenanceRouter);
 router.use('/organization', usermanagementRouter);
 router.use('/room', roomRouter);
-router.use('/mail', roomRouter);
+router.use('/mail', mailRouter);
 module.exports = { router }; 
