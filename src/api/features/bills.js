@@ -34,9 +34,9 @@ router.get('/:org_code', async (req, res) => {
 });
 
 
-router.get('/customer_id/:customer_id', async (req, res) => {
-    const { org_code } = req.query;
-    const { customer_id } = req.params;
+router.get('/:org_code/:customer_id', async (req, res) => {
+    const  org_code  = req.params.org_code;
+    const  customer_id  = req.params.customer_id;
 
     try {
         const billTableName = `${org_code}_bill`;
